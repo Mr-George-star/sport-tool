@@ -37,6 +37,10 @@
         <h3>Rounds</h3>
         <label for="rounds"></label><input id="rounds" type="number">
     </div>
+    <div class="team-size-box">
+        <h3>Team Size</h3>
+        <label for="team-size"></label><input id="team-size" type="number" value=4>
+    </div>
     <button onclick="generate()">Generate</button>
     <div class="output-box">
         <h3>Output</h3>
@@ -44,8 +48,6 @@
     </div>
 </body>
 <script>
-    const TEAM_SIZE = 4;
-
     function getRange(from, to) {
         const arr = [];
         for (let i = Number(from); i <= Number(to); i++) {
@@ -69,7 +71,7 @@
         return a;
     }
 
-    function pickTeam(players, stats) {
+    function pickTeam(players, stats, teamSize) {
         const groups = {};
 
         for (const player of players) {
@@ -85,14 +87,14 @@
             const pool = shuffle(groups[level]);
 
             for (const p of pool) {
-                if (selected.length < TEAM_SIZE) {
+                if (selected.length < teamSize) {
                     selected.push(p);
                 } else {
                     break;
                 }
             }
 
-            if (selected.length === TEAM_SIZE) {
+            if (selected.length === teamSize) {
                 break;
             }
         }
@@ -101,15 +103,19 @@
     }
 
     function generate() {
-        const aFrom = document.getElementById("a-from-input").value;
-        const aTo = document.getElementById("a-to-input").value;
+        const aFrom = parseInt(document.getElementById("a-from-input").value, 10);
+        const aTo = parseInt(document.getElementById("a-to-input").value, 10);
 
-        const bFrom = document.getElementById("b-from-input").value;
-        const bTo = document.getElementById("b-to-input").value;
+        const bFrom = parseInt(document.getElementById("b-from-input").value, 10);
+        const bTo = parseInt(document.getElementById("b-to-input").value, 10);
 
-        const rounds = Number(document.getElementById("rounds").value);
-
-        const error = validateInputs(aFrom, aTo, bFrom, bTo, rounds);
+        const rounds = Number(parseInt(document.getElementById("rounds").value, 10));
+        let teamSize = Number(parseInt(document.getElementById("team-size").value, 10));
+        if (!teamSize || teamSize <= 0) {
+            teamSize = 4
+        }
+        
+        const error = validateInputs(aFrom, aTo, bFrom, bTo, rounds, teamSize);
         if (error) {
             document.getElementById("output").innerText = error;
             return;
@@ -127,8 +133,8 @@
         // const minRoundsB = Math.ceil(B.length / TEAM_SIZE);
 
         for (let i = 0; i < rounds; i++) {
-            const teamA = pickTeam(A, statsA);
-            const teamB = pickTeam(B, statsB);
+            const teamA = pickTeam(A, statsA, teamSize);
+            const teamB = pickTeam(B, statsB, teamSize);
 
             teamA.forEach(p => statsA[p]++);
             teamB.forEach(p => statsB[p]++);
@@ -151,7 +157,7 @@
         document.getElementById("output").innerText = output;
     }
 
-    function validateInputs(aFrom, aTo, bFrom, bTo, rounds) {
+    function validateInputs(aFrom, aTo, bFrom, bTo, rounds, teamSize) {
         aFrom = Number(aFrom);
         aTo = Number(aTo);
         bFrom = Number(bFrom);
@@ -172,6 +178,12 @@
 
         if (bTo <= bFrom) {
             return "Team B: 'To' input should be bigger than 'From' input!";
+        }
+
+        const aCount = aTo - aFrom + 1;
+        const bCount = bTo - bFrom + 1;
+        if (aCount < teamSize || bCount < teamSize) {
+            return "Each team must have at least " + teamSize + " players!";
         }
         return null;
     }
