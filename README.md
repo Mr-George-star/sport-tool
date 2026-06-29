@@ -2,6 +2,8 @@
 
 A simple tool for generating fair football team rotations. The generator tries to balance appearances across players while keeping the selection as random as possible.
 
+PS: This tool created after discovering that some players were selected far less often than others during football rotations in PE class. :)
+
 ## How to Use
 ## Team A
 
