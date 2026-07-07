@@ -1,6 +1,9 @@
-# Football Team Rotation Generator
+# Football Team Combinations Generator
 
-A simple tool for generating fair football team rotations. The generator tries to balance appearances across players while keeping the selection as random as possible.
+**Current Version**: v1.5
+
+A simple tool for generating fair football team rotations. The generator tries to balance appearances across players while keeping the selection as random as possible.<br>
+The algorithm prioritizes ensuring fair playing time for everyone. When the number of players is limited and a large number of matches is required, some repeated pairings are inevitable.<br>The generator attempts to distribute appearances as evenly as possible while maintaining randomness.
 
 PS: This tool created after discovering that some players were selected far less often than others during football rotations in PE class. :)
 
@@ -78,5 +81,3 @@ Team B
 Player 1: 2 appearances
 
 Player 2: 3 appearances
-
-The generator attempts to distribute appearances as evenly as possible while maintaining randomness.
