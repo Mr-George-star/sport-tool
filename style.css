@@ -8,7 +8,14 @@ body {
     align-items: center;
 }
 
-.team-a, .team-b, .rounds-box, .output-box, .player-counts-box {
+.teams-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.team-container, .rounds-box, .output-box, .player-counts-box {
     width: 90%;
     max-width: 420px;
     background: white;
@@ -20,22 +27,20 @@ body {
     transition: all 0.2s ease;
 }
 
-.team-a:hover,
-.team-b:hover,
+.team-container:hover,
 .rounds-box:hover,
 .output-box:hover,
 .player-counts-box:hover {
     transform: translateY(-2px);
 }
 
-.inputs-a, .inputs-b {
+.inputs-container {
     display: flex;
     justify-content: space-between;
     gap: 10px;
 }
 
-.inputs-a label,
-.inputs-b label {
+.inputs-container label {
     display: flex;
     flex-direction: column;
     gap: 4px;
