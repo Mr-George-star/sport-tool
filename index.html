@@ -5,34 +5,38 @@
     <title>Football Team Combinations Tool</title>
     <link type="text/css" rel="stylesheet" href="style.css">
     <link rel="icon" href="icon.png">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="team-a">
-        <h3>Team A</h3>
-        <div class="inputs-a">
-            <label class="a-from">
-                From
-                <input class="from-input" id="a-from-input" type="number">
-            </label>
-            <label class="a-to">
-                To
-                <input class="to-input" id="a-to-input" type="number">
-            </label>
+    <div class="teams-container">
+        <div class="team-container">
+            <h3>Team A</h3>
+            <div class="inputs-container">
+                <label class="input-label">
+                    From
+                    <input class="from-input" id="a-from-input" type="number">
+                </label>
+                <label class="input-label">
+                    To
+                    <input class="to-input" id="a-to-input" type="number">
+                </label>
+            </div>
+        </div>
+        <div class="team-container">
+            <h3>Team B</h3>
+            <div class="inputs-container">
+                <label class="input-label">
+                    From
+                    <input class="from-input" id="b-from-input" type="number">
+                </label>
+                <label class="input-label">
+                    To
+                    <input class="to-input" id="b-to-input" type="number">
+                </label>
+            </div>
         </div>
     </div>
-    <div class="team-b">
-        <h3>Team B</h3>
-        <div class="inputs-b">
-            <label class="b-from">
-                From
-                <input class="from-input" id="b-from-input" type="number">
-            </label>
-            <label class="b-to">
-                To
-                <input class="to-input" id="b-to-input" type="number">
-            </label>
-        </div>
-    </div>
+    <button onclick="createTeam()">Add Team</button>
     <div class="rounds-box">
         <h3>Rounds</h3>
         <label for="rounds"></label><input id="rounds" type="number">
@@ -47,145 +51,4 @@
         <pre id="output"></pre>
     </div>
 </body>
-<script>
-    function getRange(from, to) {
-        const arr = [];
-        for (let i = Number(from); i <= Number(to); i++) {
-            arr.push(i);
-        }
-        return arr;
-    }
-
-    function initStats(players) {
-        const stats = {};
-        players.forEach(p => stats[p] = 0);
-        return stats;
-    }
-
-    function shuffle(arr) {
-        const a = [...arr];
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-    }
-
-    function pickTeam(players, stats, teamSize) {
-        const groups = {};
-
-        for (const player of players) {
-            const c = stats[player];
-            if (!groups[c]) groups[c] = [];
-            groups[c].push(player);
-        }
-
-        const levels = Object.keys(groups).map(Number).sort((a, b) => a - b);
-        const selected = [];
-
-        for (const level of levels) {
-            const pool = shuffle(groups[level]);
-
-            for (const p of pool) {
-                if (selected.length < teamSize) {
-                    selected.push(p);
-                } else {
-                    break;
-                }
-            }
-
-            if (selected.length === teamSize) {
-                break;
-            }
-        }
-
-        return selected;
-    }
-
-    function generate() {
-        const aFrom = parseInt(document.getElementById("a-from-input").value, 10);
-        const aTo = parseInt(document.getElementById("a-to-input").value, 10);
-
-        const bFrom = parseInt(document.getElementById("b-from-input").value, 10);
-        const bTo = parseInt(document.getElementById("b-to-input").value, 10);
-
-        const rounds = Number(parseInt(document.getElementById("rounds").value, 10));
-        let teamSize = Number(parseInt(document.getElementById("team-size").value, 10));
-        if (!teamSize || teamSize <= 0) {
-            teamSize = 4
-        }
-        
-        const error = validateInputs(aFrom, aTo, bFrom, bTo, rounds, teamSize);
-        if (error) {
-            document.getElementById("output").innerText = error;
-            return;
-        }
-
-        const A = getRange(aFrom, aTo);
-        const B = getRange(bFrom, bTo);
-
-        let statsA = initStats(A);
-        let statsB = initStats(B);
-
-        let output = "";
-
-        // const minRoundsA = Math.ceil(A.length / TEAM_SIZE);
-        // const minRoundsB = Math.ceil(B.length / TEAM_SIZE);
-
-        for (let i = 0; i < rounds; i++) {
-            const teamA = pickTeam(A, statsA, teamSize);
-            const teamB = pickTeam(B, statsB, teamSize);
-
-            teamA.forEach(p => statsA[p]++);
-            teamB.forEach(p => statsB[p]++);
-
-            output += `Round ${i + 1}\n`;
-            output += `A: ${teamA.join(" ")}\n`;
-            output += `B: ${teamB.join(" ")}\n\n`;
-        }
-
-        output += `=== Appearance Statistics ===\n\nTeam A:\n`;
-        for (let k in statsA) {
-            output += `${k}: ${statsA[k]}\n`;
-        }
-
-        output += `\nTeam B:\n`;
-        for (let k in statsB) {
-            output += `${k}: ${statsB[k]}\n`;
-        }
-
-        document.getElementById("output").innerText = output;
-    }
-
-    function validateInputs(aFrom, aTo, bFrom, bTo, rounds, teamSize) {
-        aFrom = Number(aFrom);
-        aTo = Number(aTo);
-        bFrom = Number(bFrom);
-        bTo = Number(bTo);
-        rounds = Number(rounds);
-
-        if (!aFrom || !aTo || !bFrom || !bTo || !rounds) {
-            return "All inputs shouldn't be 0 and shouldn't be empty!";
-        }
-
-        if (aFrom <= 0 || aTo <= 0 || bFrom <= 0 || bTo <= 0 || rounds <= 0) {
-            return "All inputs should be bigger than 0!";
-        }
-
-        if (aTo <= aFrom) {
-            return "Team A: 'To' input should be bigger than 'From' input!";
-        }
-
-        if (bTo <= bFrom) {
-            return "Team B: 'To' input should be bigger than 'From' input!";
-        }
-
-        const aCount = aTo - aFrom + 1;
-        const bCount = bTo - bFrom + 1;
-        if (aCount < teamSize || bCount < teamSize) {
-            return "Each team must have at least " + teamSize + " players!";
-        }
-        return null;
-    }
-</script>
 </html>
